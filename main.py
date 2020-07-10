@@ -118,6 +118,7 @@ async def gps_list(ctx, *args):
     if (len(args) == 0) or (args[0] == ""):
         await ctx.send("Wrong format for !gps_list, please use:\n"+
                  "!gps_list server_name")
+        return
 
     # Read data
     f = open(file=FOLDER+"/gpsdata.json",mode="r")
@@ -149,6 +150,7 @@ async def add_gps(ctx, *args):
     if (len(args) == 0) or (args[0] == "") or (args[1] == ""):
         await ctx.send("Wrong format for !gps_add, please use:\n"+
                  "!add server_name GPS_pasted_from_clipboard")
+        return
 
     gpsparse = args[1].split(":")
     if len(gpsparse) != 6:
@@ -194,6 +196,7 @@ async def remove_gps(ctx, *args):
     if (len(args) == 0) or (args[0] == "") or (args[1] == ""):
         await ctx.send("Wrong format for !gps_remove, please use:\n"+
                  "!gps_remove server_name GPS_pasted_from_clipboard")
+        return
 
     gpsparse = args[1].split(":")
     if len(gpsparse) != 6:
@@ -248,6 +251,7 @@ async def draw(ctx, *args):
     if (len(args) == 0) or (args[0] == ""):
         await ctx.send("Wrong format for !draw, please use:\n"+
                  "!draw server_name")
+        return
 
     # Read data
     f = open(file=FOLDER+"/gpsdata.json",mode="r")
