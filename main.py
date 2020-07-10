@@ -18,7 +18,7 @@ from discord.ext import commands
 logging.basicConfig(level=logging.INFO)
 
 # Folders
-FOLDER = "./Dati/"
+FOLDER = "./data/"
 if not os.path.isdir(FOLDER):
     os.mkdir(FOLDER)
 
@@ -52,7 +52,7 @@ async def on_ready():
         print("\n List of roles in the guild:")
         for role in guild.roles:
             print("  - "+str(role.name)+" ("+str(role.id)+")")
-        print("\n")
+        print("")
 
 
 # Handle joining a server
@@ -100,7 +100,7 @@ async def list_servers(ctx):
     text_output = ""
 
     # Read data
-    f = open(file="./dati/gpsdata.json",mode="r")
+    f = open(file=FOLDER+"/gpsdata.json",mode="r")
     serverdata = json.loads(f.read(),encoding="utf-8")
     f.close()
 
@@ -120,7 +120,7 @@ async def gps_list(ctx, arg):
                  "!gps_list server_name")
 
     # Read data
-    f = open(file="./dati/gpsdata.json",mode="r")
+    f = open(file=FOLDER+"/gpsdata.json",mode="r")
     serverdata = json.loads(f.read(),encoding="utf-8")
     f.close()
 
@@ -162,7 +162,7 @@ async def add_gps(ctx, arg1, arg2):
     gpsdict["z"] = float(gpsparse[4])
 
     # Read data
-    f = open(file="./dati/gpsdata.json",mode="r")
+    f = open(file=FOLDER+"/gpsdata.json",mode="r")
     serverdata = json.loads(f.read(),encoding="utf-8")
     f.close()
 
@@ -178,7 +178,7 @@ async def add_gps(ctx, arg1, arg2):
 
     targetserver["gps"].append(gpsdict)
 
-    f = open(file="./dati/gpsdata.json",mode="w")
+    f = open(file=FOLDER+"/gpsdata.json",mode="w")
     f.write(json.dumps(serverdata,sort_keys=True,indent=4))
     f.close()
 
@@ -207,7 +207,7 @@ async def remove_gps(ctx, arg1, arg2):
     gpsdict["z"] = float(gpsparse[4])
 
     # Read data
-    f = open(file="./dati/gpsdata.json",mode="r")
+    f = open(file=FOLDER+"/gpsdata.json",mode="r")
     serverdata = json.loads(f.read(),encoding="utf-8")
     f.close()
 
@@ -232,7 +232,7 @@ async def remove_gps(ctx, arg1, arg2):
 
     targetserver["gps"].remove(targetgps)
 
-    f = open(file="./dati/gpsdata.json",mode="w")
+    f = open(file=FOLDER+"/gpsdata.json",mode="w")
     f.write(json.dumps(serverdata,sort_keys=True,indent=4))
     f.close()
 
@@ -250,7 +250,7 @@ async def draw(ctx, arg):
                  "!draw server_name")
 
     # Read data
-    f = open(file="./dati/gpsdata.json",mode="r")
+    f = open(file=FOLDER+"/gpsdata.json",mode="r")
     serverdata = json.loads(f.read(),encoding="utf-8")
     f.close()
 
