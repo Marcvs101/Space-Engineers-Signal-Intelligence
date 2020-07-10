@@ -111,11 +111,11 @@ async def list_servers(ctx):
 
 
 @bot.command(name="gps_list",help="List all GPS coordinates of a server. Example <!gps_list server_name>")
-async def gps_list(ctx, arg):
+async def gps_list(ctx, *args):
     print("add command")
     
     # Check command syntax
-    if (arg == None) or (arg == ""):
+    if (len(args) == 0) or (args[0] == ""):
         await ctx.send("Wrong format for !gps_list, please use:\n"+
                  "!gps_list server_name")
 
@@ -126,12 +126,12 @@ async def gps_list(ctx, arg):
 
     targetserver = None
     for server in serverdata["servers"]:
-        if server["name"].strip().lower() == arg.strip().lower():
+        if server["name"].strip().lower() == args[0].strip().lower():
             targetserver = server
             break
 
     if targetserver == None:
-        await ctx.send("Server '"+arg+"' not found!")
+        await ctx.send("Server '"+args[0]+"' not found!")
         return
 
     text_output = ""
@@ -142,15 +142,15 @@ async def gps_list(ctx, arg):
 
 
 @bot.command(name="gps_add",help="Add a GPS coordinate to the system. Example <!gps_add server_name GPS_pasted_from_clipboard>")
-async def add_gps(ctx, arg1, arg2):
+async def add_gps(ctx, *args):
     print("add command")
     
     # Check command syntax
-    if (arg1 == None) or (arg1 == "") or (arg2 == None) or (arg2 == ""):
+    if (len(args) == 0) or (args[0] == "") or (args[1] == ""):
         await ctx.send("Wrong format for !gps_add, please use:\n"+
                  "!add server_name GPS_pasted_from_clipboard")
 
-    gpsparse = arg2.split(":")
+    gpsparse = args[1].split(":")
     if len(gpsparse) != 6:
         await ctx.send("Wrong format for gps data, please paste coordinates from clipboard")
         return
@@ -168,12 +168,12 @@ async def add_gps(ctx, arg1, arg2):
 
     targetserver = None
     for server in serverdata["servers"]:
-        if server["name"].strip().lower() == arg1.strip().lower():
+        if server["name"].strip().lower() == args[0].strip().lower():
             targetserver = server
             break
 
     if targetserver == None:
-        await ctx.send("Server '"+arg1+"' not found!")
+        await ctx.send("Server '"+args[0]+"' not found!")
         return
 
     targetserver["gps"].append(gpsdict)
@@ -182,20 +182,20 @@ async def add_gps(ctx, arg1, arg2):
     f.write(json.dumps(serverdata,sort_keys=True,indent=4))
     f.close()
 
-    print("Added coordinates ",arg2," to server ",arg1)
-    await ctx.send("Coordinates "+arg2+" added to server "+arg1)
+    print("Added coordinates ",args[1]," to server ",args[0])
+    await ctx.send("Coordinates "+args[1]+" added to server "+args[0])
 
 
 @bot.command(name="gps_remove",help="Remove a GPS coordinate to the system. Example <!gps_remove server_name GPS_pasted_from_clipboard>")
-async def remove_gps(ctx, arg1, arg2):
+async def remove_gps(ctx, *args):
     print("remove command")
     
     # Check command syntax
-    if (arg1 == None) or (arg1 == "") or (arg2 == None) or (arg2 == ""):
+    if (len(args) == 0) or (args[0] == "") or (args[1] == ""):
         await ctx.send("Wrong format for !gps_remove, please use:\n"+
                  "!gps_remove server_name GPS_pasted_from_clipboard")
 
-    gpsparse = arg2.split(":")
+    gpsparse = args[1].split(":")
     if len(gpsparse) != 6:
         await ctx.send("Wrong format for gps data, please paste coordinates from clipboard")
         return
@@ -213,12 +213,12 @@ async def remove_gps(ctx, arg1, arg2):
 
     targetserver = None
     for server in serverdata["servers"]:
-        if server["name"].strip().lower() == arg1.strip().lower():
+        if server["name"].strip().lower() == args[0].strip().lower():
             targetserver = server
             break
 
     if targetserver == None:
-        await ctx.send("Server '"+arg1+"' not found!")
+        await ctx.send("Server '"+args[0]+"' not found!")
         return
 
     targetgps = None
@@ -227,7 +227,7 @@ async def remove_gps(ctx, arg1, arg2):
             targetgps = gps
 
     if targetgps == None:
-        await ctx.send("GPS '"+arg2+"' not found!")
+        await ctx.send("GPS '"+args[1]+"' not found!")
         return
 
     targetserver["gps"].remove(targetgps)
@@ -236,16 +236,16 @@ async def remove_gps(ctx, arg1, arg2):
     f.write(json.dumps(serverdata,sort_keys=True,indent=4))
     f.close()
 
-    print("Removed coordinates ",arg2," to server ",arg1)
-    await ctx.send("Coordinates "+arg2+" removed from server "+arg1)
+    print("Removed coordinates ",args[1]," to server ",args[0])
+    await ctx.send("Coordinates "+args[1]+" removed from server "+args[0])
 
 
 @bot.command(name="draw",help="Compute and draw the centroids on screen. Example <!draw server_name>")
-async def draw(ctx, arg):
+async def draw(ctx, *args):
     print("draw command")
 
     # Check command syntax
-    if (arg == None) or (arg == ""):
+    if (len(args) == 0) or (args[0] == ""):
         await ctx.send("Wrong format for !draw, please use:\n"+
                  "!draw server_name")
 
@@ -256,12 +256,12 @@ async def draw(ctx, arg):
 
     targetserver = None
     for server in serverdata["servers"]:
-        if server["name"].strip().lower() == arg.strip().lower():
+        if server["name"].strip().lower() == args[0].strip().lower():
             targetserver = server
             break
 
     if targetserver == None:
-        await ctx.send("Server '"+arg+"' not found!")
+        await ctx.send("Server '"+args[0]+"' not found!")
         return
 
     # Init text output
