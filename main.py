@@ -33,6 +33,9 @@ else:
 
 TOKEN = dati_token["discord_bot"]
 
+# Defaults
+DEFAULT_SERVER = "peaceful"
+
 # Command prefix structure
 class CMD_Prefix:
     def __call__(self, bot, message):
@@ -112,27 +115,30 @@ async def list_servers(ctx):
 
 @bot.command(name="gps_list",help="List all GPS coordinates of a server. Example <!gps_list server_name>")
 async def gps_list(ctx, *args):
-    print("add command")
+    print("list command")
     
-    # Check command syntax
-    if (len(args) == 0) or (args[0] == ""):
-        await ctx.send("Wrong format for !gps_list, please use:\n"+
-                 "!gps_list server_name")
-        return
-
     # Read data
     f = open(file=FOLDER+"/gpsdata.json",mode="r")
     serverdata = json.loads(f.read(),encoding="utf-8")
     f.close()
 
+    # Parse server
+    argserver = ""
+    if (len(args) == 0) or (args[0] == ""):
+        # If no server, default
+        argserver = DEFAULT_SERVER
+    else:
+        argserver = args[0].strip().lower()
+
+    # Find server
     targetserver = None
     for server in serverdata["servers"]:
-        if server["name"].strip().lower() == args[0].strip().lower():
+        if server["name"].strip().lower() == argserver:
             targetserver = server
             break
 
     if targetserver == None:
-        await ctx.send("Server '"+args[0]+"' not found!")
+        await ctx.send("Server '"+argserver+"' not found!")
         return
 
     text_output = ""
@@ -147,35 +153,56 @@ async def add_gps(ctx, *args):
     print("add command")
     
     # Check command syntax
-    if (len(args) == 0) or (args[0] == "") or (args[1] == ""):
+    if (len(args) == 0) or (args[0] == ""):
         await ctx.send("Wrong format for !gps_add, please use:\n"+
                  "!add server_name GPS_pasted_from_clipboard")
         return
 
-    gpsparse = args[1].split(":")
+    # Reconstruct argument string
+    argstring = ""
+    for arg in args:
+        argstring = argstring + arg.strip() + " "
+    args = argstring.strip().split("GPS:")
+
+    # Parse GPS
+    gpsparse = ""
+    if (len(args) == 1):
+        # If no server, default
+        gpsparse = args[0].split(":")
+    else:
+        gpsparse = args[1].split(":")
     if len(gpsparse) != 6:
         await ctx.send("Wrong format for gps data, please paste coordinates from clipboard")
         return
 
     gpsdict = dict()
-    gpsdict["name"] = gpsparse[1]
-    gpsdict["x"] = float(gpsparse[2])
-    gpsdict["y"] = float(gpsparse[3])
-    gpsdict["z"] = float(gpsparse[4])
+    gpsdict["name"] = gpsparse[0]
+    gpsdict["x"] = float(gpsparse[1])
+    gpsdict["y"] = float(gpsparse[2])
+    gpsdict["z"] = float(gpsparse[3])
 
     # Read data
     f = open(file=FOLDER+"/gpsdata.json",mode="r")
     serverdata = json.loads(f.read(),encoding="utf-8")
     f.close()
 
+    # Parse server
+    argserver = ""
+    if (len(args) == 0) or (args[0] == ""):
+        # If no server, default
+        argserver = DEFAULT_SERVER
+    else:
+        argserver = args[0].strip().lower()
+
+    # Find server
     targetserver = None
     for server in serverdata["servers"]:
-        if server["name"].strip().lower() == args[0].strip().lower():
+        if server["name"].strip().lower() == argserver:
             targetserver = server
             break
 
     if targetserver == None:
-        await ctx.send("Server '"+args[0]+"' not found!")
+        await ctx.send("Server '"+argserver+"' not found!")
         return
 
     targetserver["gps"].append(gpsdict)
@@ -193,35 +220,59 @@ async def remove_gps(ctx, *args):
     print("remove command")
     
     # Check command syntax
-    if (len(args) == 0) or (args[0] == "") or (args[1] == ""):
+    if (len(args) == 0) or (args[0] == ""):
         await ctx.send("Wrong format for !gps_remove, please use:\n"+
                  "!gps_remove server_name GPS_pasted_from_clipboard")
         return
 
-    gpsparse = args[1].split(":")
-    if len(gpsparse) != 6:
+    # Reconstruct argument string
+    argstring = ""
+    for arg in args:
+        argstring = argstring + arg.strip() + " "
+    args = argstring.strip().split("GPS:")
+
+    # Parse GPS
+    gpsparse = ""
+    print(argstring)
+    print(args)
+    if (len(args) == 1):
+        # If no server, default
+        gpsparse = args[0].split(":")
+    else:
+        gpsparse = args[1].split(":")
+    if len(gpsparse) != 6 and len(gpsparse) != 5:
+        print(gpsparse,len(gpsparse))
         await ctx.send("Wrong format for gps data, please paste coordinates from clipboard")
         return
 
     gpsdict = dict()
-    gpsdict["name"] = gpsparse[1]
-    gpsdict["x"] = float(gpsparse[2])
-    gpsdict["y"] = float(gpsparse[3])
-    gpsdict["z"] = float(gpsparse[4])
+    gpsdict["name"] = gpsparse[0]
+    gpsdict["x"] = float(gpsparse[1])
+    gpsdict["y"] = float(gpsparse[2])
+    gpsdict["z"] = float(gpsparse[3])
 
     # Read data
     f = open(file=FOLDER+"/gpsdata.json",mode="r")
     serverdata = json.loads(f.read(),encoding="utf-8")
     f.close()
 
+    # Parse server
+    argserver = ""
+    if (len(args) == 0) or (args[0] == ""):
+        # If no server, default
+        argserver = DEFAULT_SERVER
+    else:
+        argserver = args[0].strip().lower()
+
+    # Find server
     targetserver = None
     for server in serverdata["servers"]:
-        if server["name"].strip().lower() == args[0].strip().lower():
+        if server["name"].strip().lower() == argserver:
             targetserver = server
             break
 
     if targetserver == None:
-        await ctx.send("Server '"+args[0]+"' not found!")
+        await ctx.send("Server '"+argserver+"' not found!")
         return
 
     targetgps = None
@@ -247,25 +298,28 @@ async def remove_gps(ctx, *args):
 async def draw(ctx, *args):
     print("draw command")
 
-    # Check command syntax
-    if (len(args) == 0) or (args[0] == ""):
-        await ctx.send("Wrong format for !draw, please use:\n"+
-                 "!draw server_name")
-        return
-
     # Read data
     f = open(file=FOLDER+"/gpsdata.json",mode="r")
     serverdata = json.loads(f.read(),encoding="utf-8")
     f.close()
 
+    # Parse server
+    argserver = ""
+    if (len(args) == 0) or (args[0] == ""):
+        # If no server, default
+        argserver = DEFAULT_SERVER
+    else:
+        argserver = args[0].strip().lower()
+
+    # Find server
     targetserver = None
     for server in serverdata["servers"]:
-        if server["name"].strip().lower() == args[0].strip().lower():
+        if server["name"].strip().lower() == argserver:
             targetserver = server
             break
 
     if targetserver == None:
-        await ctx.send("Server '"+args[0]+"' not found!")
+        await ctx.send("Server '"+argserver+"' not found!")
         return
 
     # Init text output
@@ -279,6 +333,10 @@ async def draw(ctx, *args):
     y = list()
     z = list()
     datamatrix = list()
+
+    if len(targetserver["gps"]) == 0:
+        await ctx.send("No coordinates for server '"+argserver+"'\nUnable to perform analysis!")
+        return
 
     for gps in targetserver["gps"]:
         datamatrix.append([gps["x"],gps["y"],gps["z"]])
@@ -296,10 +354,10 @@ async def draw(ctx, *args):
     text_output = text_output + 'Estimated number of clusters: '+str(n_clusters_)+"\n"
     text_output = text_output + "Estimated GPS coordinates of centroids:\n"
     
-    counter = 0
+    counter = 1
     for center in af.cluster_centers_:
-        print("GPS:Cluster "+str(counter)+":"+str(center[0])+":"+str(center[1])+":"+str(center[2])+":")
-        text_output = text_output + "GPS:Cluster "+str(counter)+":"+str(center[0])+":"+str(center[1])+":"+str(center[2])+":\n"
+        print("GPS:Cluster "+str(counter)+":"+str(center[0])+":"+str(center[1])+":"+str(center[2])+":#B20968:")
+        text_output = text_output + "GPS:Cluster "+str(counter)+":"+str(center[0])+":"+str(center[1])+":"+str(center[2])+":#B20968:\n"
         counter = counter+1
 
     clusterlist = list()
