@@ -354,7 +354,7 @@ async def draw(ctx, *args):
     text_output = text_output + 'Estimated number of clusters: '+str(n_clusters_)+"\n"
     text_output = text_output + "Estimated GPS coordinates of centroids:\n"
     
-    counter = 1
+    counter = 0
     for center in af.cluster_centers_:
         print("GPS:Cluster "+str(counter)+":"+str(center[0])+":"+str(center[1])+":"+str(center[2])+":#B20968:")
         text_output = text_output + "GPS:Cluster "+str(counter)+":"+str(center[0])+":"+str(center[1])+":"+str(center[2])+":#B20968:\n"
